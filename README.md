@@ -10,3 +10,8 @@ This project includes:
 All of these examples package the documentation with the generated `JAR` file.
 If you run the application from the `JAR`, it will expose the documentation
 under `/docs/index.html`.
+
+> __Important for Spring Boot 2.x__: The Gradle setup must be slightly changed
+if you are using Spring Boot 2 (currently only availabe as milestones). Instead
+of the `jar` task, you need to modify the new `bootJar` task. The configuration
+content is the same!
