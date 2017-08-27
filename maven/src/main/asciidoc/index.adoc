@@ -1,0 +1,65 @@
+= Example Movies Service API Documentation
+
+== HTTP Verbs
+
+This application tries to adhere as closely as possible to standard HTTP and
+REST conventions in its use of HTTP verbs.
+
+|===
+| Verb | Usage
+
+| `GET`
+| Used to retrieve resource(s).
+
+| `POST`
+| Used to create a new resource or execute and action.
+
+| `DELETE`
+| Used to delete a resource.
+|===
+
+== HTTP Status Codes
+
+This application tries to adhere as closely as possible to standard HTTP and
+REST conventions in its use of HTTP status codes.
+
+|===
+| Status code | Usage
+
+| `200 OK`
+| The request completed successfully.
+
+| `201 Created`
+| A new resource has been created successfully..
+
+| `204 No Content`
+| The request completed successfully, but there is no content included in the
+response.
+
+| `400 Bad Request`
+| The request was malformed. The response body will include an error providing
+further information.
+
+| `404 Not Found`
+| The requested resource did not exist.
+
+| `409 Conflict`
+| The requested action resource is not available for the resource's current state.
+|===
+
+== Resources: Movies
+
+=== Getting a Movie
+
+Existing movies can be retrieved with a `GET` request on the movie's
+`/api/movies/{id}` resource:
+
+include::{snippets}/movies/getMovieById-found/http-request.adoc[]
+
+The response will contain information about the movie like this:
+
+include::{snippets}/movies/getMovieById-found/http-response.adoc[]
+
+If the requested movie doesn't exist a `404 Not Found` is returned like this:
+
+include::{snippets}/movies/getMovieById-notFound/http-response.adoc[]
