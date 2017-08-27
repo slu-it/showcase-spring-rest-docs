@@ -1,0 +1,74 @@
+buildscript {
+    ext {
+        springBootVersion = '1.5.6.RELEASE'
+        asciidoctorVersion = '1.5.3'
+        snippetsDir = file('build/generated-snippets')
+    }
+    repositories {
+        mavenCentral()
+        // (1) add JCenter in order to have access to the AsciiDoctor plugin
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        // (2) add the AsciiDoctor plugin to the build classpath
+        classpath("org.asciidoctor:asciidoctor-gradle-plugin:${asciidoctorVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+// (3) apply the AsciiDoctor plugin
+apply plugin: "org.asciidoctor.convert"
+
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web')
+    testCompile("org.springframework.restdocs:spring-restdocs-mockmvc")
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+test {
+    // (4) define snippets directory aus output of test task
+    // Note: If you are using testing frameworks which override or replace the default 'test'
+    // task, you might need to define this in that task's configuration instead of here.
+    outputs.dir snippetsDir
+}
+
+asciidoctor {
+    // (5) link the asciidoc task to the test task
+    // Note: As stated above, the task you should link to might differ depending on you setup
+    dependsOn test
+
+    // (6) define snippets directory as an input for this task
+    inputs.dir snippetsDir
+
+    // (7) configure AsciiDoctor settings: http://asciidoctor.org/docs/user-manual
+    setOptions([
+            'doctype': 'book',
+            'backend': 'html5'
+    ])
+    setAttributes([
+            'snippets'          : snippetsDir,
+            'source-highlighter': 'coderay',
+            'toc'               : 'left',
+            'toclevels'         : '3',
+            'sectlinks'         : 'true'
+    ])
+}
+
+jar {
+    // (8) link the jar task to the asciidoctor task
+    dependsOn asciidoctor
+    // (9) copy asciidoctor outputs into the Spring Boot jar file
+    // to expose them on '/docs/*' as part of the application
+    from("${asciidoctor.outputDir}/html5") {
+        into 'BOOT-INF/classes/static/docs'
+    }
+}
